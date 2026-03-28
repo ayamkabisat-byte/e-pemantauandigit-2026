@@ -239,24 +239,6 @@
                                         <option value="Kadaluarsa / Proses">Kadaluarsa / Sedang Proses</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Keamanan Ruang TIK <span class="text-red-500">*</span></label>
-                                    <select name="kesiapan_ruang" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                        <option value="">-- Pilih Observasi --</option>
-                                        <option value="Aman (Teralis/Gembok ganda/CCTV)">Aman (Teralis/Gembok ganda/CCTV)</option>
-                                        <option value="Kurang Aman (Kunci pintu biasa)">Kurang Aman (Hanya kunci pintu biasa)</option>
-                                        <option value="Tidak Layak (Rawan pencurian)">Tidak Layak (Rawan pencurian/bocor)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stabilitas Listrik & Internet <span class="text-red-500">*</span></label>
-                                    <select name="kesiapan_listrik_inet" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Listrik & Internet Stabil">Listrik & Internet Stabil/Memadai</option>
-                                        <option value="Listrik Stabil, Internet Lemah">Listrik Stabil, Namun Internet Lemah</option>
-                                        <option value="Listrik Sering Padam / Blank Spot">Listrik Sering Padam / Blank Spot Internet</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
                         <div class="mt-6 flex justify-end">
@@ -385,7 +367,6 @@
                             <div id="laptop-container">
                                 <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-itjenblue p-4 mb-5 text-sm text-blue-800 dark:text-blue-200 rounded-r-md">
                                     <p class="font-bold mb-1">Bantuan Pengecekan Sistem (Optional):</p>
-                                    <a href="https://drive.google.com/file/d/1u2F1YOXxHzdnqvhvSjb_EInisP_F4XcO/view?usp=drive_link" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold underline mr-3 hover:text-blue-800"><i class="fa-solid fa-download"></i> Download Crystal Disk Info (CDI)</a>
                                     <a href="https://docs.google.com/spreadsheets/d/1VFvDDRHMp6XgkcJYDh8hUzD0M8T6EFmz/edit?usp=drive_link&ouid=114867604459284843279&rtpof=true&sd=true" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold underline hover:text-blue-800"><i class="fa-solid fa-book"></i> Manual Cek Laptop & Hardisk</a>
                                 </div>
 
@@ -405,7 +386,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">2. Prosesor (Min. Core i5 atau Ryzen 5 7000 Series) <span class="text-red-500">*</span></label>
                                         <select name="ops_prosesor" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                            <option value="">-- Cek via Task Manager --</option>
+                                            <option value="">-- Cek via Task Manager/System Properties --</option>
                                             <option value="Sesuai">Sesuai (Terbaca Core i5 atau Ryzen 5 7000 Series)</option>
                                             <option value="Downgrade Spek">Tidak Sesuai (Downgrade Spesifikasi / Prosesor Lama)</option>
                                         </select>
@@ -562,7 +543,7 @@
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">8. Garansi Resmi (Cek Web) <span class="text-red-500">*</span></label>
                                             <select name="hdd_garansi" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                                <option value="">-- Cek Web Seagate/WD --</option>
+                                                <option value="">-- Cek Web DTARA --</option>
                                                 <option value="Aktif & Resmi (Sesuai Zona)">Aktif & Sesuai Zona Indonesia</option>
                                                 <option value="Expired / Black Market">Expired / Tidak Terdaftar / Black Market</option>
                                             </select>
@@ -573,11 +554,11 @@
                                         <h4 class="font-bold text-gray-800 dark:text-white mb-3">9. Data S.M.A.R.T (Dari Aplikasi CDI)</h4>
                                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <label class="block text-xs font-bold mb-1">Waktu Nyala (Jam) <span class="text-red-500">*</span></label>
+                                                <label class="block text-xs font-bold mb-1">Waktu nyala/Power on Hours (jam) <span class="text-red-500">*</span></label>
                                                 <input type="number" name="hdd_hours" data-req="true" placeholder="Misal: 5" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
                                             </div>
                                             <div>
-                                                <label class="block text-xs font-bold mb-1">Jumlah Dinyalakan <span class="text-red-500">*</span></label>
+                                                <label class="block text-xs font-bold mb-1">jumlah dinyalakan/Power on Count <span class="text-red-500">*</span></label>
                                                 <input type="number" name="hdd_count" data-req="true" placeholder="Misal: 10" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
                                             </div>
                                             <div>
@@ -688,13 +669,7 @@
             <tr><th>Nama Petugas Auditor Itjen</th><td id="p_auditor"></td></tr>
         </table>
 
-        <div class="print-section-title">B. KESIAPAN INFRASTRUKTUR</div>
-        <table class="print-table">
-            <tr><th width="30%">Keamanan Ruang TIK</th><td id="p_ruang"></td></tr>
-            <tr><th>Stabilitas Listrik & Internet</th><td id="p_listrik"></td></tr>
-        </table>
-
-        <div class="print-section-title">C. PEMERIKSAAN PERALATAN TIK</div>
+        <div class="print-section-title">B. PEMERIKSAAN PERALATAN TIK</div>
         <table class="print-table">
             <tr><th colspan="2" style="text-align:center;">1. INTERACTIVE FLAT PANEL (IFP) - HISENSE 75WM61FE</th></tr>
             <tr><td width="30%">Fisik Layar (75 Inch)</td><td id="p_ifp_layar"></td></tr>
@@ -720,7 +695,7 @@
 
         <div class="page-break"></div>
 
-        <div class="print-section-title">D. KESIMPULAN & TAUTAN BUKTI</div>
+        <div class="print-section-title">C. KESIMPULAN & TAUTAN BUKTI</div>
         <table class="print-table">
             <tr><th width="30%">Status Akhir LHP</th><td id="p_status_akhir" style="font-weight:bold;"></td></tr>
             <tr><th>Uraian Kesimpulan</th><td id="p_kesimpulan_akhir"></td></tr>
@@ -916,9 +891,6 @@
             document.getElementById('p_hp').innerText = fd.get('hp_kepsek') || "-";
             document.getElementById('p_auditor').innerText = fd.get('nama_auditor') || "-";
             
-            document.getElementById('p_ruang').innerText = fd.get('kesiapan_ruang') || "-";
-            document.getElementById('p_listrik').innerText = fd.get('kesiapan_listrik_inet') || "-";
-            
             document.getElementById('p_ifp_layar').innerText = fd.get('ifp_layar') || "-";
             document.getElementById('p_ifp_os').innerText = fd.get('ifp_os') || "-";
             document.getElementById('p_ifp_memori').innerText = fd.get('ifp_memori') || "-";
@@ -959,7 +931,7 @@
                 document.getElementById('p_hdd_merk').innerText = fd.get('hdd_merk_cdi') || "-";
                 document.getElementById('p_hdd_fisik_sn_garansi').innerText = `Fisik: ${fd.get('hdd_fisik_port') || "-"} | S/N: ${fd.get('hdd_sn') || "-"} | Garansi: ${fd.get('hdd_kartu_garansi') || "-"}`;
                 document.getElementById('p_hdd_kapasitas_konten').innerText = `${fd.get('hdd_kapasitas_real') || "-"} | Konten Offline: ${fd.get('hdd_konten_rumah_pendidikan') || "-"} (${fd.get('hdd_kapasitas_konten') || "0"} GB)`;
-                document.getElementById('p_hdd_smart').innerText = `Nyala: ${fd.get('hdd_hours') || "0"} Jam | ${fd.get('hdd_count') || "0"} Kali | Status: ${fd.get('hdd_health') || "-"}`;
+                document.getElementById('p_hdd_smart').innerText = `Power on Hours: ${fd.get('hdd_hours') || "0"} Jam | Power on Count: ${fd.get('hdd_count') || "0"} Kali | Status: ${fd.get('hdd_health') || "-"}`;
                 document.getElementById('p_hdd_catatan').innerText = fd.get('hdd_catatan') || "-";
             }
 
@@ -1033,7 +1005,7 @@
         });
 
         // --- KIRIM DATA KE GOOGLE APPS SCRIPT ---
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbz1clUvS8L5nHxTpsFUk__5fyBPOes4MKuTisntOvLO4DzYi73WwboW4w0mHE8t-iO-/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxhh2LHNKnvYQHJ34kzYbmFxukOKitu4yUUfI86sBFbNNt79NO_4oz72GhnVKX70mM/exec'; 
         
         const btnSubmit = document.getElementById('btn-submit');
         const submitText = document.getElementById('submit-text');
@@ -1096,17 +1068,7 @@
                 formDataToSend.set('hdd_health', '-');
             }
 
-            // UBAH FORMAT DATA MENJADI URL-ENCODED AGAR TERBACA OLEH APPS SCRIPT
-            const urlEncodedData = new URLSearchParams(formDataToSend);
-
-            fetch(scriptURL, { 
-                method: 'POST', 
-                body: urlEncodedData, 
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
+            fetch(scriptURL, { method: 'POST', body: formDataToSend })
                 .then(response => {
                     submitText.classList.remove('hidden');
                     submitLoader.classList.add('hidden');
