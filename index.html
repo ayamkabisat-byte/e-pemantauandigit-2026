@@ -1096,7 +1096,17 @@
                 formDataToSend.set('hdd_health', '-');
             }
 
-            fetch(scriptURL, { method: 'POST', body: formDataToSend, mode: 'no-cors' })
+            // UBAH FORMAT DATA MENJADI URL-ENCODED AGAR TERBACA OLEH APPS SCRIPT
+            const urlEncodedData = new URLSearchParams(formDataToSend);
+
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: urlEncodedData, 
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
                 .then(response => {
                     submitText.classList.remove('hidden');
                     submitLoader.classList.add('hidden');
