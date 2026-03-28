@@ -1096,7 +1096,7 @@
                 formDataToSend.set('hdd_health', '-');
             }
 
-            fetch(scriptURL, { method: 'no-cors', body: formDataToSend })
+            fetch(scriptURL, { method: 'POST', body: formDataToSend, mode: 'no-cors' })
                 .then(response => {
                     submitText.classList.remove('hidden');
                     submitLoader.classList.add('hidden');
