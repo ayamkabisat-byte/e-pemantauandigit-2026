@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Pemantauan Digitalisasi 2026</title>
+    
+    <link rel="icon" href="favicon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        itjenblue: '#067ac1',
+                        itjenorange: '#f9a703',
+                        sidebarbg: '#0f172a',
+                        darkbg: '#121212',
+                        darkcard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #f9a703; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-active { background-color: #067ac1; color: #ffffff; font-weight: 600; border-left: 4px solid #f9a703; }
+        .tab-inactive { background-color: transparent; color: #cbd5e1; border-left: 4px solid transparent; }
+        .tab-inactive:hover { background-color: #1e293b; color: #ffffff; }
+
+        .status-check.completed { color: #f9a703 !important; display: block !important; }
+        
+        .form-section { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: background-color 0.3s; }
+        .dark .form-section { background-color: #1e293b; border-color: #334155; }
+        .section-title { font-size: 1.125rem; font-weight: 700; color: #067ac1; margin-bottom: 1.25rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem; }
+        .dark .section-title { color: #f9a703; border-color: #475569; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+        /* TAMPILAN CETAK (PRINT CSS) UNTUK LHP RESMI */
+        @media print {
+            body { background: white !important; color: black !important; font-size: 11pt; }
+            .no-print, header, aside, button, nav, #alert-success, #alert-error, .bg-blue-50, .bg-red-50, .bg-yellow-50 { display: none !important; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0 20px; background: white; }
+            .print-kop { text-align: center; border-bottom: 4px solid #067ac1; padding-bottom: 10px; margin-bottom: 20px; }
+            .print-kop img { width: 100%; max-height: 140px; object-fit: contain; }
+            .print-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 5px; color: black !important; }
+            .print-subtitle { text-align: center; font-size: 12pt; margin-bottom: 20px; text-transform: uppercase; color: black !important; font-weight: bold; }
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+            .print-table th, .print-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
+            .print-table th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; font-weight: bold; }
+            .print-section-title { font-weight: bold; margin-top: 15px; margin-bottom: 5px; font-size: 11pt; background: #e0e0e0 !important; padding: 5px; -webkit-print-color-adjust: exact; }
+            .signature-area { margin-top: 30px; width: 100%; display: table; page-break-inside: avoid; }
+            .signature-box { display: table-cell; width: 50%; text-align: center; }
+            .signature-space { height: 80px; }
+            * { -webkit-print-color-adjust: exact; color-adjust: exact; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-darkbg font-sans antialiased text-gray-800 dark:text-gray-200 h-screen flex overflow-hidden transition-colors duration-300">
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 hidden lg:hidden no-print" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="bg-sidebarbg text-white w-64 flex-shrink-0 flex flex-col h-full fixed lg:static z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none no-print">
+        <div class="h-16 flex items-center justify-center px-6 border-b border-gray-800 bg-[#0b1221]">
+            <i class="fa-solid fa-shield-halved text-itjenorange text-xl mr-3"></i>
+            <span class="font-bold text-lg tracking-wide uppercase">Itjen Kemendikdasmen</span>
+        </div>
+        
+        <div class="px-6 py-5 border-b border-gray-800">
+            <div class="flex items-center space-x-3">
+                <img src="logo pengawasan.png" alt="Logo" class="h-12 w-12 object-contain drop-shadow-md bg-white rounded p-0.5">
+                <div>
+                    <p class="text-sm font-medium text-gray-300">Sistem Pemantauan</p>
+                    <p class="text-xs text-itjenorange font-bold leading-tight mt-0.5">Bantuan Digitalisasi</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Menu Instrumen</div>
+        <nav class="flex-1 overflow-y-auto px-3 space-y-1">
+            <button onclick="openTab('tab-kesiapan')" id="btn-tab-kesiapan" class="w-full tab-btn tab-active flex items-center justify-between px-3 py-3 rounded-md">
+                <div class="flex items-center"><i class="fa-solid fa-building-columns w-6 text-center text-lg"></i><span class="ml-2 text-sm">1. Data Umum</span></div>
+                <i class="fa-solid fa-circle-check status-check hidden text-lg"></i>
+            </button>
+            <button onclick="openTab('tab-ifp')" id="btn-tab-ifp" class="w-full tab-btn tab-inactive flex items-center justify-between px-3 py-3 rounded-md">
+                <div class="flex items-center"><i class="fa-solid fa-tv w-6 text-center text-lg"></i><span class="ml-2 text-sm">2. Alat IFP</span></div>
+                <i class="fa-solid fa-circle-check status-check hidden text-lg"></i>
+            </button>
+            <button onclick="openTab('tab-laptop')" id="btn-tab-laptop" class="w-full tab-btn tab-inactive flex items-center justify-between px-3 py-3 rounded-md">
+                <div class="flex items-center"><i class="fa-solid fa-laptop w-6 text-center text-lg"></i><span class="ml-2 text-sm">3. Laptop</span></div>
+                <i class="fa-solid fa-circle-check status-check hidden text-lg"></i>
+            </button>
+            <button onclick="openTab('tab-hdd')" id="btn-tab-hdd" class="w-full tab-btn tab-inactive flex items-center justify-between px-3 py-3 rounded-md">
+                <div class="flex items-center"><i class="fa-solid fa-hard-drive w-6 text-center text-lg"></i><span class="ml-2 text-sm">4. Hardisk Ext</span></div>
+                <i class="fa-solid fa-circle-check status-check hidden text-lg"></i>
+            </button>
+            <div class="my-2 border-t border-gray-800"></div>
+            <button onclick="openTab('tab-submit')" id="btn-tab-submit" class="w-full tab-btn tab-inactive flex items-center justify-between px-3 py-3 rounded-md">
+                <div class="flex items-center"><i class="fa-solid fa-file-signature w-6 text-center text-lg"></i><span class="ml-2 text-sm">5. LHP & Cetak</span></div>
+                <i class="fa-solid fa-circle-check status-check hidden text-lg"></i>
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-800 bg-[#0b1221]">
+            <div id="save-status" class="flex items-center justify-center space-x-2 text-sm font-semibold text-green-400 bg-green-900/30 px-3 py-2 rounded-lg border border-green-800/50">
+                <i class="fa-solid fa-cloud-arrow-up"></i><span>Draft Aman</span>
+            </div>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-gray-100 dark:bg-[#121212] transition-colors duration-300 no-print">
+        
+        <header class="h-16 bg-white dark:bg-darkcard shadow-sm border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 sm:px-6 z-10 transition-colors duration-300">
+            <div class="flex items-center">
+                <button onclick="toggleSidebar()" class="lg:hidden mr-4 text-gray-600 hover:text-itjenblue dark:text-gray-300 focus:outline-none">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+                <h1 class="text-lg sm:text-xl font-bold text-itjenblue dark:text-itjenorange">Instrumen Uji Petik Digitalisasi 2026</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="theme-toggle" class="bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm flex items-center">
+                    <i class="fa-solid fa-moon mr-2"></i> <span class="hidden sm:inline">Mode Gelap</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-6 rounded-xl overflow-hidden shadow-sm border-b-4 border-itjenorange">
+                    <img id="header-img" src="Header Itjen Kemendikdasmen.png" alt="Header Banner" class="w-full h-auto object-cover max-h-48 sm:max-h-56">
+                </div>
+
+                <form id="form-pemantauan" name="submit-to-google-sheet" class="transition-colors duration-300">
+                    
+                    <!-- KUNCI REVISI -->
+                    <div class="bg-white dark:bg-darkcard rounded-xl shadow-sm p-5 sm:p-6 mb-6 border-l-4 border-itjenblue dark:border-itjenorange transition-colors">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0"><i class="fa-solid fa-key text-itjenblue dark:text-itjenorange text-2xl mt-1"></i></div>
+                            <div class="ml-4 w-full">
+                                <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-1">NPSN (Nomor Pokok Sekolah Nasional) - Kunci Utama <span class="text-red-500">*</span></h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Sistem menggunakan NPSN. Jika NPSN yang sama disubmit kembali, <strong>data lama di server otomatis direvisi</strong>.</p>
+                                <input type="number" id="kode_pemantauan" name="kode_pemantauan" placeholder="Ketik NPSN..." required class="block w-full md:w-1/2 rounded-md border-gray-300 shadow-sm border p-3 font-bold text-lg focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:focus:border-itjenorange transition-colors">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 1: IDENTITAS SATUAN PENDIDIKAN -->
+                    <div id="tab-kesiapan" class="tab-content">
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fa-solid fa-building-columns mr-2 text-itjenorange"></i>A. Identitas & Kesiapan Satuan Pendidikan</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Satuan Pendidikan <span class="text-red-500">*</span></label>
+                                    <input type="text" name="nama_sekolah" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat Satuan Pendidikan <span class="text-red-500">*</span></label>
+                                    <input type="text" name="alamat_sekolah" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kecamatan <span class="text-red-500">*</span></label>
+                                    <input type="text" name="kecamatan" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kabupaten / Kota <span class="text-red-500">*</span></label>
+                                    <input type="text" name="kabupaten_kota" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Provinsi <span class="text-red-500">*</span></label>
+                                    <input type="text" name="provinsi" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jumlah Siswa Keseluruhan <span class="text-red-500">*</span></label>
+                                    <input type="number" name="jumlah_siswa" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status Kepemilikan <span class="text-red-500">*</span></label>
+                                    <select name="kepemilikan" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih Kepemilikan --</option>
+                                        <option value="Pemerintah Daerah">Pemerintah Daerah (Negeri)</option>
+                                        <option value="Yayasan">Yayasan (Swasta)</option>
+                                        <option value="Pribadi/Lainnya">Pribadi / Lainnya</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Akreditasi <span class="text-red-500">*</span></label>
+                                    <select name="akreditasi" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih Akreditasi --</option>
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                        <option value="Belum Terakreditasi">Belum Terakreditasi</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kepala Sekolah <span class="text-red-500">*</span></label>
+                                    <input type="text" name="nama_kepsek" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">No. Kontak Kepala Sekolah <span class="text-red-500">*</span></label>
+                                    <input type="text" name="hp_kepsek" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Petugas Auditor Itjen <span class="text-red-500">*</span></label>
+                                    <input type="text" name="nama_auditor" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                            </div>
+                            
+                            <hr class="my-5 border-gray-200 dark:border-slate-600">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sinkronisasi Dapodik <span class="text-red-500">*</span></label>
+                                    <select name="sinkron_dapodik" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih Status --</option>
+                                        <option value="Sudah Sinkron (Mutakhir)">Sudah Sinkron (Mutakhir)</option>
+                                        <option value="Belum / Terlambat">Belum / Terlambat</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Izin Operasional (Untuk Swasta) <span class="text-red-500">*</span></label>
+                                    <select name="izin_operasional" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="Aktif / Negeri">Aktif (Atau Sekolah Negeri)</option>
+                                        <option value="Kadaluarsa / Proses">Kadaluarsa / Sedang Proses</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Keamanan Ruang TIK <span class="text-red-500">*</span></label>
+                                    <select name="kesiapan_ruang" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih Observasi --</option>
+                                        <option value="Aman (Teralis/Gembok ganda/CCTV)">Aman (Teralis/Gembok ganda/CCTV)</option>
+                                        <option value="Kurang Aman (Kunci pintu biasa)">Kurang Aman (Hanya kunci pintu biasa)</option>
+                                        <option value="Tidak Layak (Rawan pencurian)">Tidak Layak (Rawan pencurian/bocor)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Stabilitas Listrik & Internet <span class="text-red-500">*</span></label>
+                                    <select name="kesiapan_listrik_inet" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="Listrik & Internet Stabil">Listrik & Internet Stabil/Memadai</option>
+                                        <option value="Listrik Stabil, Internet Lemah">Listrik Stabil, Namun Internet Lemah</option>
+                                        <option value="Listrik Sering Padam / Blank Spot">Listrik Sering Padam / Blank Spot Internet</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-end">
+                            <button type="button" onclick="validateAndNext('tab-kesiapan', 'tab-ifp')" class="bg-itjenblue text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg font-bold transition-all">Simpan & Lanjut Cek IFP <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: IFP -->
+                    <div id="tab-ifp" class="tab-content hidden">
+                        <div class="form-section">
+                            <h3 class="section-title text-itjenblue dark:text-itjenorange"><i class="fa-solid fa-tv mr-2 text-itjenorange"></i>B. Spesifikasi Alat BAPP: Interactive Flat Panel (IFP)</h3>
+                            
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-itjenblue p-4 mb-5 text-sm text-blue-800 dark:text-blue-200 rounded-r-md flex justify-between items-center">
+                                <div>
+                                    <strong>Merk Alat:</strong> HISENSE<br>
+                                    <strong>Tipe Alat:</strong> 75WM61FE
+                                </div>
+                                <i class="fa-solid fa-circle-info text-2xl opacity-50"></i>
+                            </div>
+
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">1. Fisik Layar (Sesuai BAPP) <span class="text-red-500">*</span></label>
+                                    <select name="ifp_layar" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Verifikasi Layar --</option>
+                                        <option value="Sesuai">75 Inch kondisi baik, utuh/tidak retak, tidak ada Dead Pixel</option>
+                                        <option value="Tidak Sesuai">Tidak Sesuai (Layar retak / Terdapat Dead Pixel / Bukan 75 Inch)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">2. Sistem Operasi (Wajib Android 13) <span class="text-red-500">*</span></label>
+                                    <select name="ifp_os" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Cek Menu Settings > About --</option>
+                                        <option value="Sesuai (Android 13)">Sesuai (Terbaca Android 13 atau lebih baru)</option>
+                                        <option value="Tidak Sesuai (Android Lama)">Tidak Sesuai (Android 11, 12, atau versi lama)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">3. Memori Internal IFP (RAM 16GB, Storage 256GB) <span class="text-red-500">*</span></label>
+                                    <select name="ifp_memori" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Cek Kapasitas RAM & ROM --</option>
+                                        <option value="Sesuai (16GB/256GB)">Sesuai (Kapasitas RAM 16GB dan Penyimpanan 256GB)</option>
+                                        <option value="Downgrade Spek">Tidak Sesuai / Downgrade (Misal RAM 8GB / ROM 128GB)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">4. Teknologi Sentuh (Min. 20 Point Touch) <span class="text-red-500">*</span></label>
+                                    <select name="ifp_touch" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Tes Sensitivitas Sentuhan --</option>
+                                        <option value="Berfungsi Optimal">Berfungsi Optimal (Bisa disentuh banyak jari, respon cepat)</option>
+                                        <option value="Bermasalah / Kurang Sensitif">Bermasalah (Ada area mati, ghost touch, lambat)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">5. Jaringan & Audio <span class="text-red-500">*</span></label>
+                                    <select name="ifp_jaringan" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Tes Konektivitas & Suara --</option>
+                                        <option value="Normal">Sinyal Wifi dan Bluetooth dapat terkoneksi, Speaker berfungsi normal</option>
+                                        <option value="Bermasalah">Bermasalah (Speaker mati atau Modul jaringan tidak bisa terkoneksi)</option>
+                                    </select>
+                                </div>
+
+                                <!-- KELENGKAPAN AKSESORIS (CHECKBOX) -->
+                                <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+                                    <label class="block text-sm font-bold text-gray-800 dark:text-white mb-2">6. Kelengkapan Aksesoris Fisik IFP <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Centang aksesoris yang dikirim dan tersedia utuh di lokasi:</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Standing bracket" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Standing bracket</span>
+                                        </label>
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Kabel HDMI (3 meter)" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Kabel HDMI (3 meter)</span>
+                                        </label>
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Kabel USB Type A to B" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Kabel USB Type A to Type B (3 m)</span>
+                                        </label>
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Pena Stylus (2 buah)" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Pena Stylus (2 buah)</span>
+                                        </label>
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Buku Panduan IFP" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Buku Panduan IFP Berbahasa Indo</span>
+                                        </label>
+                                        <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                            <input type="checkbox" value="Kartu Garansi" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded aksesoris-cb"> <span class="text-sm dark:text-gray-300">Kartu Garansi</span>
+                                        </label>
+                                    </div>
+                                    <input type="hidden" name="ifp_aksesoris" id="ifp_aksesoris_hidden">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">7. Status Inventarisasi Aset <span class="text-red-500">*</span></label>
+                                    <select name="ifp_aset" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <option value="">-- Cek Pencatatan Aset --</option>
+                                        <option value="Sudah Terinventarisasi">Sudah terinventarisasi sebagai Aset sekolah/Pemda/Yayasan (untuk swasta)</option>
+                                        <option value="Belum Terinventarisasi">Belum terinventarisasi</option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-2 border-t border-gray-200 dark:border-slate-700 pt-5">
+                                    <label class="block text-sm font-medium text-red-600 dark:text-itjenorange mb-1">Catatan Khusus IFP (Wajib diisi jika ada temuan)</label>
+                                    <textarea name="ifp_catatan" rows="2" placeholder="Jelaskan kendala atau kerusakan spesifik IFP di sini..." class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white transition-colors"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-between">
+                            <button type="button" onclick="openTab('tab-kesiapan')" class="bg-white border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 dark:bg-slate-800 px-5 py-2.5 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 font-medium transition-all"><i class="fa-solid fa-arrow-left mr-2"></i> Kembali</button>
+                            <button type="button" onclick="validateAndNext('tab-ifp', 'tab-laptop')" class="bg-itjenblue text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-all">Cek Laptop <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: LAPTOP -->
+                    <div id="tab-laptop" class="tab-content hidden">
+                        <div class="form-section">
+                            <h3 class="section-title text-itjenblue dark:text-itjenorange flex justify-between items-center">
+                                <span><i class="fa-solid fa-laptop mr-2 text-itjenorange"></i>C. Modul Laptop</span>
+                            </h3>
+
+                            <div class="mb-5 border-b border-gray-200 dark:border-slate-700 pb-5">
+                                <label class="block text-sm font-bold text-gray-800 dark:text-white mb-2">Status Penerimaan Bantuan Laptop <span class="text-red-500">*</span></label>
+                                <select name="status_terima_laptop" id="status_terima_laptop" required class="block w-full rounded-md border-2 border-itjenblue shadow-sm p-3 focus:ring-itjenblue dark:bg-slate-800 dark:border-itjenorange dark:text-white transition-colors font-semibold" onchange="toggleLaptop()">
+                                    <option value="Sudah Diterima">Sudah Diterima (Lanjutkan Pemeriksaan Laptop)</option>
+                                    <option value="Belum Diterima">Belum Diterima (Lewati Modul Laptop)</option>
+                                </select>
+                            </div>
+                            
+                            <div id="laptop-container">
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-itjenblue p-4 mb-5 text-sm text-blue-800 dark:text-blue-200 rounded-r-md">
+                                    <p class="font-bold mb-1">Bantuan Pengecekan Sistem (Optional):</p>
+                                    <a href="https://drive.google.com/file/d/1u2F1YOXxHzdnqvhvSjb_EInisP_F4XcO/view?usp=drive_link" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold underline mr-3 hover:text-blue-800"><i class="fa-solid fa-download"></i> Download Crystal Disk Info (CDI)</a>
+                                    <a href="https://docs.google.com/spreadsheets/d/1VFvDDRHMp6XgkcJYDh8hUzD0M8T6EFmz/edit?usp=drive_link&ouid=114867604459284843279&rtpof=true&sd=true" target="_blank" class="text-blue-600 dark:text-blue-400 font-semibold underline hover:text-blue-800"><i class="fa-solid fa-book"></i> Manual Cek Laptop & Hardisk</a>
+                                </div>
+
+                                <div class="space-y-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">1. Merk dan Tipe <span class="text-red-500">*</span></label>
+                                        <select name="ops_jenis" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Pilih Merk Laptop yang Diterima --</option>
+                                            <option value="DAC F1 R57Z3PE">DAC F1 R57Z3PE</option>
+                                            <option value="DAC F2 SPE">DAC F2 SPE</option>
+                                            <option value="Libera X10-K i5 Gen12 8GB SSD 256 GB (14) Win11 1Y">Libera X10-K i5 Gen12 8GB SSD 256 GB (14) Win11 1Y</option>
+                                            <option value="MUGEN OPHIR 512(8256S14) W11P 1Y">MUGEN OPHIR 512(8256S14) W11P 1Y</option>
+                                            <option value="Zyrex Notebook Cruiser 22 A82 (57U-P-ES5)">Zyrex Notebook Cruiser 22 A82 (57U-P-ES5)</option>
+                                            <option value="Lainnya">Lainnya (Tulis di Catatan)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">2. Prosesor (Min. Core i5 atau Ryzen 5 7000 Series) <span class="text-red-500">*</span></label>
+                                        <select name="ops_prosesor" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek via Task Manager --</option>
+                                            <option value="Sesuai">Sesuai (Terbaca Core i5 atau Ryzen 5 7000 Series)</option>
+                                            <option value="Downgrade Spek">Tidak Sesuai (Downgrade Spesifikasi / Prosesor Lama)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">3. Memori RAM (Min. 8GB) <span class="text-red-500">*</span></label>
+                                        <select name="ops_ram" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Kapasitas RAM --</option>
+                                            <option value="Sesuai">Sesuai (Minimal 8GB)</option>
+                                            <option value="Kurang dari 8GB">Tidak Sesuai (Kurang dari 8GB)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">4. Penyimpanan (Min. 256GB SSD) <span class="text-red-500">*</span></label>
+                                        <select name="ops_ssd" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Tipe Disk --</option>
+                                            <option value="Sesuai">Sesuai (Berjenis SSD, min 256GB)</option>
+                                            <option value="Tidak Sesuai">Tidak Sesuai (Bukan SSD atau Kurang dari 256GB)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">5. Lisensi OS Windows <span class="text-red-500">*</span></label>
+                                        <select name="ops_os" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Aktivasi OS --</option>
+                                            <option value="Windows Asli Teraktivasi">Sesuai (Windows 11 Asli teraktivasi)</option>
+                                            <option value="Minta Aktivasi / Bajakan">Tidak Sesuai (Minta aktivasi / Bajakan)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700">
+                                        <label class="block text-sm font-bold text-gray-800 dark:text-white mb-2">6. Kelengkapan Aksesoris Laptop <span class="text-red-500">*</span></label>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Centang aksesoris yang dikirim dan tersedia utuh:</p>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                                <input type="checkbox" value="Adaptor dan Kabel Power" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded laptop-cb"> <span class="text-sm dark:text-gray-300">Adaptor dan Kabel Power</span>
+                                            </label>
+                                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                                <input type="checkbox" value="Dus Box" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded laptop-cb"> <span class="text-sm dark:text-gray-300">Dus Box</span>
+                                            </label>
+                                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                                <input type="checkbox" value="Buku Manual Berbahasa Indonesia" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded laptop-cb"> <span class="text-sm dark:text-gray-300">Buku Manual Berbahasa Indonesia</span>
+                                            </label>
+                                            <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700">
+                                                <input type="checkbox" value="Kartu Garansi (1 Tahun)" class="h-4 w-4 text-itjenblue focus:ring-itjenblue border-gray-300 rounded laptop-cb"> <span class="text-sm dark:text-gray-300">Kartu Garansi (1 Tahun)</span>
+                                            </label>
+                                        </div>
+                                        <input type="hidden" name="ops_aksesoris" id="ops_aksesoris_hidden">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">7. Status Inventarisasi Aset <span class="text-red-500">*</span></label>
+                                        <select name="ops_aset" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Pencatatan Aset --</option>
+                                            <option value="Sudah Terinventarisasi">Sudah terinventarisasi sebagai Aset sekolah/Pemda/Yayasan (untuk swasta)</option>
+                                            <option value="Belum Terinventarisasi">Belum terinventarisasi</option>
+                                        </select>
+                                    </div>
+                                    <div class="mt-2 border-t border-gray-200 dark:border-slate-700 pt-5">
+                                        <label class="block text-sm font-medium text-red-600 dark:text-itjenorange mb-1">Catatan Khusus Laptop</label>
+                                        <textarea name="ops_catatan" rows="2" placeholder="Jelaskan jika ada cacat/downgrade pada unit Laptop..." class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-between">
+                            <button type="button" onclick="openTab('tab-ifp')" class="bg-white border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 dark:bg-slate-800 px-5 py-2.5 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 font-medium transition-all"><i class="fa-solid fa-arrow-left mr-2"></i> Kembali</button>
+                            <button type="button" onclick="validateAndNext('tab-laptop', 'tab-hdd')" class="bg-itjenblue text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-all">Cek Hardisk <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: HARDISK EKSTERNAL -->
+                    <div id="tab-hdd" class="tab-content hidden">
+                        <div class="form-section">
+                            <h3 class="section-title text-itjenblue dark:text-itjenorange flex justify-between items-center">
+                                <span><i class="fa-solid fa-hard-drive mr-2 text-itjenorange"></i>D. Hardisk Eksternal</span>
+                            </h3>
+
+                            <div class="mb-5 border-b border-gray-200 dark:border-slate-700 pb-5">
+                                <label class="block text-sm font-bold text-gray-800 dark:text-white mb-2">Status Penerimaan Bantuan Hardisk <span class="text-red-500">*</span></label>
+                                <select name="status_terima_hdd" id="status_terima_hdd" required class="block w-full rounded-md border-2 border-itjenblue shadow-sm p-3 focus:ring-itjenblue dark:bg-slate-800 dark:border-itjenorange dark:text-white transition-colors font-semibold" onchange="toggleHdd()">
+                                    <option value="Sudah Diterima">Sudah Diterima (Lanjutkan Pemeriksaan Hardisk)</option>
+                                    <option value="Belum Diterima">Belum Diterima (Lewati Modul Hardisk)</option>
+                                </select>
+                            </div>
+                            
+                            <div id="hdd-container">
+                                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 mb-5 text-sm text-red-800 dark:text-red-200 space-y-2 rounded-r-md">
+                                    <p class="font-bold">INSTRUKSI WAJIB: Colokkan Hardisk & Buka Aplikasi CDI dari Flashdisk Anda.</p>
+                                    <div class="flex flex-wrap gap-3 mt-2">
+                                        <a href="https://drive.google.com/file/d/1u2F1YOXxHzdnqvhvSjb_EInisP_F4XcO/view?usp=drive_link" target="_blank" class="bg-white border border-red-200 text-red-700 px-3 py-1.5 rounded hover:bg-red-100 font-semibold"><i class="fa-solid fa-download"></i> Download Aplikasi CDI</a>
+                                        <a href="https://docs.google.com/spreadsheets/d/1VFvDDRHMp6XgkcJYDh8hUzD0M8T6EFmz/edit?usp=drive_link&ouid=114867604459284843279&rtpof=true&sd=true" target="_blank" class="bg-white border border-red-200 text-red-700 px-3 py-1.5 rounded hover:bg-red-100 font-semibold"><i class="fa-solid fa-book"></i> Manual Pengecekan</a>
+                                        <a href="https://docs.google.com/spreadsheets/d/1VFvDDRHMp6XgkcJYDh8hUzD0M8T6EFmz/edit?usp=drive_link&ouid=114867604459284843279&rtpof=true&sd=true" target="_blank" class="bg-white border border-red-200 text-red-700 px-3 py-1.5 rounded hover:bg-red-100 font-semibold"><i class="fa-solid fa-shield-check"></i> Cara Cek Garansi HDD</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">1. Merk dan Tipe Hardisk (Hasil Uji CDI) <span class="text-red-500">*</span></label>
+                                        <input type="text" name="hdd_merk_cdi" data-req="true" placeholder="Contoh: Seagate Expansion 500GB" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white transition-colors">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">2. Kondisi Port USB & Segel <span class="text-red-500">*</span></label>
+                                        <select name="hdd_fisik_port" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Fisik --</option>
+                                            <option value="Baru (Kuningan Bersih)">Baru (Tembaga bersih, Segel utuh)</option>
+                                            <option value="Aus (Banyak Goresan)">Aus/Banyak Goresan (Indikasi sering dicabut-pasang)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">3. Kesesuaian 3 Titik S/N <span class="text-red-500">*</span></label>
+                                        <select name="hdd_sn" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Kotak vs Bodi vs Aplikasi --</option>
+                                            <option value="SAMA PERSIS (Asli)">SAMA PERSIS (Barang Pabrikan Asli)</option>
+                                            <option value="BERBEDA (Indikasi Casing Bajakan)">BERBEDA (Indikasi kuat casing/isi ditukar)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">4. Kapasitas & Uji Kapasitas Palsu <span class="text-red-500">*</span></label>
+                                        <select name="hdd_kapasitas_real" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                            <option value="">-- Cek Kapasitas Riil --</option>
+                                            <option value="Sesuai (500GB)">Sesuai (Label 500GB, terbaca riil ~465GB)</option>
+                                            <option value="Tidak Sesuai (Kapasitas dibawah 500 GB)">Tidak Sesuai (Kapasitas dibawah 500 GB)</option>
+                                            <option value="Kapasitas Palsu (Uji Crystal Disk Info Error)">Kapasitas Palsu (Error saat uji Crystal Disk Info)</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">5. Aplikasi Rumah Pendidikan (Offline) <span class="text-red-500">*</span></label>
+                                            <select name="hdd_konten_rumah_pendidikan" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Cek Isi Hardisk --</option>
+                                                <option value="Ada">Ada</option>
+                                                <option value="Tidak Ada">Tidak Ada (Kosong)</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">6. Kapasitas Data/Isi Konten (GB) <span class="text-red-500">*</span></label>
+                                            <div class="flex items-center">
+                                                <input type="number" name="hdd_kapasitas_konten" data-req="true" placeholder="Misal: 15" required class="block w-full rounded-l-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                                <span class="bg-gray-200 dark:bg-slate-900 dark:text-gray-300 dark:border-slate-600 px-4 py-2.5 border border-l-0 rounded-r-md text-sm font-medium">GB</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">7. Kartu Garansi (1 Tahun) <span class="text-red-500">*</span></label>
+                                            <select name="hdd_kartu_garansi" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Cek Fisik Aksesoris --</option>
+                                                <option value="Ada">Ada (Fisik Kartu Tersedia)</option>
+                                                <option value="Tidak Ada">Tidak Ada</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">8. Garansi Resmi (Cek Web) <span class="text-red-500">*</span></label>
+                                            <select name="hdd_garansi" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                                <option value="">-- Cek Web Seagate/WD --</option>
+                                                <option value="Aktif & Resmi (Sesuai Zona)">Aktif & Sesuai Zona Indonesia</option>
+                                                <option value="Expired / Black Market">Expired / Tidak Terdaftar / Black Market</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg border border-gray-200 dark:border-slate-700 mt-2">
+                                        <h4 class="font-bold text-gray-800 dark:text-white mb-3">9. Data S.M.A.R.T (Dari Aplikasi CDI)</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-bold mb-1">Waktu Nyala (Jam) <span class="text-red-500">*</span></label>
+                                                <input type="number" name="hdd_hours" data-req="true" placeholder="Misal: 5" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold mb-1">Jumlah Dinyalakan <span class="text-red-500">*</span></label>
+                                                <input type="number" name="hdd_count" data-req="true" placeholder="Misal: 10" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-bold mb-1">Health Status <span class="text-red-500">*</span></label>
+                                                <select name="hdd_health" data-req="true" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Good (Biru)">Good / Biru</option>
+                                                    <option value="Caution/Bad (Merah)">Caution/Bad</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 border-t border-gray-200 dark:border-slate-700 pt-3">
+                                        <label class="block text-sm font-medium text-red-600 dark:text-itjenorange mb-1">Catatan Khusus Hardisk</label>
+                                        <textarea name="hdd_catatan" rows="2" placeholder="Tuliskan temuan terkait S.M.A.R.T, Garansi, atau Konten offline..." class="block w-full rounded-md border-gray-300 shadow-sm p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:text-white"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-between">
+                            <button type="button" onclick="openTab('tab-laptop')" class="bg-white border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 dark:bg-slate-800 px-5 py-2.5 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 font-medium transition-all"><i class="fa-solid fa-arrow-left mr-2"></i> Kembali</button>
+                            <button type="button" onclick="validateAndNext('tab-hdd', 'tab-submit')" class="bg-itjenblue text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-blue-700 font-bold transition-all">Kesimpulan LHP <i class="fa-solid fa-check-double ml-2"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: KESIMPULAN, DRIVE & CETAK -->
+                    <div id="tab-submit" class="tab-content hidden">
+                        <div class="form-section border-t-4 border-t-itjenblue dark:border-t-itjenorange">
+                            <h3 class="section-title text-itjenblue dark:text-itjenorange"><i class="fa-solid fa-file-contract mr-2 text-itjenorange"></i>E. Kesimpulan LHP & Berita Acara</h3>
+                            
+                            <div class="space-y-6 mb-6">
+                                <div>
+                                    <label class="block text-base font-bold text-gray-800 dark:text-white mb-3">Status Akhir Kelayakan Satuan Pendidikan: <span class="text-red-500">*</span></label>
+                                    <div class="flex flex-col gap-4">
+                                        <label class="flex items-start cursor-pointer p-4 border border-green-300 bg-green-50 dark:bg-green-900/20 rounded-xl hover:shadow-md transition">
+                                            <input type="radio" name="kesimpulan_akhir" value="MEMENUHI BAPP" required class="mt-1 h-5 w-5 text-green-600 focus:ring-green-500">
+                                            <div class="ml-3">
+                                                <span class="block font-bold text-green-800 dark:text-green-400 text-lg">MEMENUHI SPESIFIKASI BAPP</span>
+                                                <span class="block text-sm text-green-700 dark:text-green-500 mt-1 leading-relaxed">Seluruh perangkat (IFP, Laptop, Hardisk) 100% sesuai juknis, asli, tidak *downgrade*, lengkap, dan kesiapan memadai.</span>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-start cursor-pointer p-4 border border-red-300 bg-red-50 dark:bg-red-900/20 rounded-xl hover:shadow-md transition">
+                                            <input type="radio" name="kesimpulan_akhir" value="ADA TEMUAN / TIDAK SESUAI" required class="mt-1 h-5 w-5 text-red-600 focus:ring-red-500">
+                                            <div class="ml-3">
+                                                <span class="block font-bold text-red-800 dark:text-red-400 text-lg">TERDAPAT TEMUAN / PENYIMPANGAN</span>
+                                                <span class="block text-sm text-red-700 dark:text-red-500 mt-1 leading-relaxed">Ditemukan indikasi downgrade spek BAPP, barang rekondisi/palsu, aksesoris hilang, atau ketidaksiapan fatal di sekolah.</span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Kesimpulan Global LHP:</label>
+                                    <textarea name="catatan_final" rows="3" placeholder="Tuliskan rekomendasi atau kesimpulan akhir untuk sekolah ini..." class="block w-full rounded-md border-gray-400 shadow-sm p-3 focus:ring-itjenorange dark:bg-slate-700 dark:text-white transition-colors"></textarea>
+                                </div>
+
+                                <!-- LINK GOOGLE DRIVE UNTUK BAPP & FOTO -->
+                                <div class="bg-blue-50 dark:bg-slate-800 p-5 rounded-lg border border-blue-200 dark:border-slate-700">
+                                    <label class="block text-base font-bold text-itjenblue dark:text-itjenorange mb-2"><i class="fa-brands fa-google-drive mr-2"></i>Tautan Google Drive (Bukti Audit & Dokumentasi) <span class="text-red-500">*</span></label>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Mohon unggah file berikut ke dalam 1 folder Google Drive Anda: <strong>1) Foto/Scan BAPP, 2) Screenshot Hasil Uji Crystal Disk Info (CDI) Harddisk, 3) Screenshot System Properties/DxDiag Laptop, dan 4) Dokumentasi Alat & Ruangan</strong>. Pastikan akses folder diatur ke <em>"Siapa saja yang memiliki link" (Anyone with link)</em>, lalu tempel tautan tersebut di bawah ini.</p>
+                                    <input type="url" name="link_drive_bukti" required placeholder="https://drive.google.com/drive/folders/..." class="block w-full text-sm rounded-md border-gray-300 shadow-sm p-3 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white transition-colors font-mono">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                                <button type="button" onclick="generatePrint()" class="w-full bg-white border-2 border-itjenblue text-itjenblue dark:bg-slate-800 dark:text-itjenorange dark:border-itjenorange font-bold py-3.5 px-4 rounded-lg shadow-sm hover:bg-blue-50 dark:hover:bg-slate-700 transition flex items-center justify-center">
+                                    <i class="fa-solid fa-print mr-2"></i> Cetak Laporan PDF (LHP)
+                                </button>
+                                
+                                <button type="submit" id="btn-submit" class="w-full bg-itjenblue text-white font-bold py-3.5 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition flex items-center justify-center">
+                                    <span id="submit-text"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Data Ke Server</span>
+                                    <div id="submit-loader" class="loader hidden"></div>
+                                </button>
+                            </div>
+                            
+                            <!-- Notifikasi -->
+                            <div id="alert-success" class="hidden mt-5 bg-green-50 dark:bg-green-900/30 border border-green-500 text-green-800 dark:text-green-300 p-4 rounded-lg shadow-sm">
+                                <p class="font-bold text-lg"><i class="fa-solid fa-circle-check mr-2 text-green-500"></i>Laporan Berhasil Disimpan!</p>
+                            </div>
+                            <div id="alert-error" class="hidden mt-5 bg-red-50 dark:bg-red-900/30 border border-red-500 text-red-800 dark:text-red-300 p-4 rounded-lg shadow-sm">
+                                <p class="font-bold text-lg"><i class="fa-solid fa-triangle-exclamation mr-2 text-red-500"></i>Koneksi Gagal!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- AREA CETAK LAPORAN (HIDDEN DI WEB, MUNCUL DI PDF/PRINT) -->
+    <div id="print-area" class="hidden">
+        <div class="print-kop">
+            <img src="Header Itjen Kemendikdasmen.png" alt="Kop Surat Resmi Kemendikdasmen">
+        </div>
+        
+        <h3 class="print-subtitle">INSTRUMEN UJI PETIK KESIAPAN DAN KESESUAIAN BAPP<br>BANTUAN DIGITALISASI PENDIDIKAN TAHUN 2026</h3>
+
+        <div class="print-section-title">A. IDENTITAS SATUAN PENDIDIKAN</div>
+        <table class="print-table">
+            <tr><th width="30%">NPSN</th><td id="p_npsn"></td></tr>
+            <tr><th>Nama Satuan Pendidikan</th><td id="p_sekolah"></td></tr>
+            <tr><th>Alamat Lengkap</th><td><span id="p_alamat"></span>, Kec. <span id="p_kec"></span>, Kab/Kota. <span id="p_kab"></span>, <span id="p_prov"></span></td></tr>
+            <tr><th>Status Sekolah</th><td>Akreditasi: <span id="p_akreditasi"></span> | Kepemilikan: <span id="p_kepemilikan"></span></td></tr>
+            <tr><th>Jumlah Siswa</th><td><span id="p_siswa"></span> Siswa</td></tr>
+            <tr><th>Izin Operasional & Dapodik</th><td>Izin: <span id="p_izin"></span> | Dapodik: <span id="p_dapodik"></span></td></tr>
+            <tr><th>Nama & HP Kepala Sekolah</th><td><span id="p_kepsek"></span> / <span id="p_hp"></span></td></tr>
+            <tr><th>Nama Petugas Auditor Itjen</th><td id="p_auditor"></td></tr>
+        </table>
+
+        <div class="print-section-title">B. KESIAPAN INFRASTRUKTUR</div>
+        <table class="print-table">
+            <tr><th width="30%">Keamanan Ruang TIK</th><td id="p_ruang"></td></tr>
+            <tr><th>Stabilitas Listrik & Internet</th><td id="p_listrik"></td></tr>
+        </table>
+
+        <div class="print-section-title">C. PEMERIKSAAN PERALATAN TIK</div>
+        <table class="print-table">
+            <tr><th colspan="2" style="text-align:center;">1. INTERACTIVE FLAT PANEL (IFP) - HISENSE 75WM61FE</th></tr>
+            <tr><td width="30%">Fisik Layar (75 Inch)</td><td id="p_ifp_layar"></td></tr>
+            <tr><td>Sistem Operasi & Memori</td><td><span id="p_ifp_os"></span> | <span id="p_ifp_memori"></span></td></tr>
+            <tr><td>Touch, Jaringan & Audio</td><td><span id="p_ifp_touch"></span> | <span id="p_ifp_jaringan"></span></td></tr>
+            <tr><td>Aksesoris Fisik Terkirim</td><td id="p_ifp_aksesoris"></td></tr>
+            <tr><td>Status Inventarisasi Aset</td><td id="p_ifp_aset"></td></tr>
+            <tr><td>Catatan / Temuan IFP</td><td id="p_ifp_catatan" style="color:red; font-style:italic;"></td></tr>
+            
+            <tr><th colspan="2" style="text-align:center;">2. MODUL LAPTOP</th></tr>
+            <tr><td>Spesifikasi Laptop (<span id="p_ops_jenis"></span>)</td><td id="p_ops_detail"></td></tr>
+            <tr><td>Aksesoris Laptop Terkirim</td><td id="p_ops_aksesoris"></td></tr>
+            <tr><td>Status Inventarisasi Laptop</td><td id="p_ops_aset"></td></tr>
+            <tr><td>Catatan Laptop</td><td id="p_ops_catatan" style="color:red; font-style:italic;"></td></tr>
+            
+            <tr><th colspan="2" style="text-align:center;">3. HARDISK EKSTERNAL</th></tr>
+            <tr><td>Hardisk (Merk/Tipe CDI)</td><td id="p_hdd_merk" style="font-weight: bold;"></td></tr>
+            <tr><td>Fisik, SN, Garansi (1 Thn)</td><td id="p_hdd_fisik_sn_garansi"></td></tr>
+            <tr><td>Kapasitas & Konten Edukasi</td><td id="p_hdd_kapasitas_konten"></td></tr>
+            <tr><td>Hardisk S.M.A.R.T (Jam/Kali)</td><td id="p_hdd_smart"></td></tr>
+            <tr><td>Catatan Hardisk</td><td id="p_hdd_catatan" style="color:red; font-style:italic;"></td></tr>
+        </table>
+
+        <div class="page-break"></div>
+
+        <div class="print-section-title">D. KESIMPULAN & TAUTAN BUKTI</div>
+        <table class="print-table">
+            <tr><th width="30%">Status Akhir LHP</th><td id="p_status_akhir" style="font-weight:bold;"></td></tr>
+            <tr><th>Uraian Kesimpulan</th><td id="p_kesimpulan_akhir"></td></tr>
+            <tr><th>Tautan Drive Bukti/BAPP</th><td id="p_link" style="word-break: break-all;"></td></tr>
+        </table>
+
+        <div class="signature-area">
+            <div class="signature-box">
+                <p>Kepala Satuan Pendidikan,</p>
+                <div class="signature-space"></div>
+                <p style="font-weight:bold; text-decoration:underline;" id="s_kepsek"></p>
+            </div>
+            <div class="signature-box">
+                <p>Petugas Auditor,</p>
+                <div class="signature-space"></div>
+                <p style="font-weight:bold; text-decoration:underline;" id="s_auditor"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        function setTheme(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                themeToggle.innerHTML = '<i class="fa-solid fa-sun text-yellow-400 mr-2"></i> <span class="hidden sm:inline">Mode Terang</span>';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                htmlElement.classList.remove('dark');
+                themeToggle.innerHTML = '<i class="fa-solid fa-moon text-gray-500 mr-2"></i> <span class="hidden sm:inline">Mode Gelap</span>';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        themeToggle.addEventListener('click', () => { setTheme(!htmlElement.classList.contains('dark')); });
+        if (localStorage.getItem('theme') === 'dark') setTheme(true); else setTheme(false);
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        }
+
+        // --- FUNGSI TOGGLE LEWATI LAPTOP & HARDISK ---
+        function toggleLaptop() {
+            const val = document.getElementById('status_terima_laptop').value;
+            const container = document.getElementById('laptop-container');
+            const reqs = container.querySelectorAll('[data-req="true"]');
+            const cbs = container.querySelectorAll('input[type="checkbox"]');
+            
+            if (val === 'Belum Diterima') {
+                container.classList.add('hidden');
+                reqs.forEach(el => el.removeAttribute('required'));
+                cbs.forEach(cb => cb.classList.remove('laptop-cb')); // Matikan validasi wajib centang
+            } else {
+                container.classList.remove('hidden');
+                reqs.forEach(el => el.setAttribute('required', 'true'));
+                cbs.forEach(cb => cb.classList.add('laptop-cb'));
+            }
+            updateTabStatus();
+        }
+
+        function toggleHdd() {
+            const val = document.getElementById('status_terima_hdd').value;
+            const container = document.getElementById('hdd-container');
+            const reqs = container.querySelectorAll('[data-req="true"]');
+            
+            if (val === 'Belum Diterima') {
+                container.classList.add('hidden');
+                reqs.forEach(el => el.removeAttribute('required'));
+            } else {
+                container.classList.remove('hidden');
+                reqs.forEach(el => el.setAttribute('required', 'true'));
+            }
+            updateTabStatus();
+        }
+
+        function updateTabStatus() {
+            const tabs = ['tab-kesiapan', 'tab-ifp', 'tab-laptop', 'tab-hdd', 'tab-submit'];
+            tabs.forEach(tabId => {
+                const tabContent = document.getElementById(tabId);
+                const tabBtn = document.getElementById('btn-' + tabId);
+                const checkIcon = tabBtn.querySelector('.status-check');
+                
+                const requiredElements = tabContent.querySelectorAll('[required]');
+                let isCompleted = true;
+
+                for (let i = 0; i < requiredElements.length; i++) {
+                    const el = requiredElements[i];
+                    if (el.type === 'radio') {
+                        const radios = tabContent.querySelectorAll(`input[name="${el.name}"]`);
+                        if (!Array.from(radios).some(r => r.checked)) { isCompleted = false; break; }
+                    } else if (el.tagName === 'SELECT') {
+                        if (el.value === "") { isCompleted = false; break; }
+                    } else if (!el.value.trim()) {
+                        isCompleted = false; break;
+                    }
+                }
+                
+                if(tabId === 'tab-ifp') {
+                    const checkboxes = document.querySelectorAll('.aksesoris-cb');
+                    const hiddenInput = document.getElementById('ifp_aksesoris_hidden');
+                    let checkedVals = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                    hiddenInput.value = checkedVals.join(', ');
+                    if(checkedVals.length === 0) { isCompleted = false; } 
+                }
+
+                if(tabId === 'tab-laptop' && document.getElementById('status_terima_laptop').value !== 'Belum Diterima') {
+                    const checkboxes = document.querySelectorAll('.laptop-cb');
+                    const hiddenInput = document.getElementById('ops_aksesoris_hidden');
+                    let checkedVals = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+                    hiddenInput.value = checkedVals.join(', ');
+                    if(checkedVals.length === 0) { isCompleted = false; } 
+                }
+
+                const npsnInput = document.getElementById('kode_pemantauan');
+                if(!npsnInput.value.trim()){ isCompleted = false; }
+
+                if (isCompleted && requiredElements.length > 0) {
+                    checkIcon.classList.add('completed');
+                } else {
+                    checkIcon.classList.remove('completed');
+                }
+            });
+        }
+
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); });
+
+            document.getElementById('btn-' + tabId).classList.remove('tab-inactive');
+            document.getElementById('btn-' + tabId).classList.add('tab-active');
+            
+            if(window.innerWidth < 1024) {
+                const sidebar = document.getElementById('sidebar');
+                if(!sidebar.classList.contains('-translate-x-full')){ toggleSidebar(); }
+            }
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateAndNext(currentTabId, nextTabId) {
+            const npsnInput = document.getElementById('kode_pemantauan');
+            if (!npsnInput.checkValidity()) { npsnInput.reportValidity(); return; }
+
+            const currentTab = document.getElementById(currentTabId);
+            const requiredElements = currentTab.querySelectorAll('[required]');
+            let isValid = true;
+
+            for (let i = 0; i < requiredElements.length; i++) {
+                if (!requiredElements[i].checkValidity()) {
+                    requiredElements[i].reportValidity(); 
+                    isValid = false; break;
+                }
+            }
+            
+            if(currentTabId === 'tab-ifp') {
+                const checkboxes = document.querySelectorAll('.aksesoris-cb');
+                if(Array.from(checkboxes).filter(cb => cb.checked).length === 0) {
+                    alert("Mohon centang kelengkapan aksesoris IFP (Pilih minimal satu, atau pastikan data terisi).");
+                    isValid = false;
+                }
+            }
+
+            if(currentTabId === 'tab-laptop' && document.getElementById('status_terima_laptop').value !== 'Belum Diterima') {
+                const checkboxes = document.querySelectorAll('.laptop-cb');
+                if(Array.from(checkboxes).filter(cb => cb.checked).length === 0) {
+                    alert("Mohon centang kelengkapan aksesoris Laptop (Pilih minimal satu).");
+                    isValid = false;
+                }
+            }
+
+            if (isValid) { openTab(nextTabId); }
+        }
+
+        // --- CETAK LAPORAN (PRINT LHP) ---
+        function generatePrint() {
+            const fd = new FormData(document.getElementById('form-pemantauan'));
+            document.getElementById('p_npsn').innerText = fd.get('kode_pemantauan') || "-";
+            document.getElementById('p_sekolah').innerText = fd.get('nama_sekolah') || "-";
+            document.getElementById('p_alamat').innerText = fd.get('alamat_sekolah') || "-";
+            document.getElementById('p_kec').innerText = fd.get('kecamatan') || "-";
+            document.getElementById('p_kab').innerText = fd.get('kabupaten_kota') || "-";
+            document.getElementById('p_prov').innerText = fd.get('provinsi') || "-";
+            document.getElementById('p_siswa').innerText = fd.get('jumlah_siswa') || "-";
+            document.getElementById('p_akreditasi').innerText = fd.get('akreditasi') || "-";
+            document.getElementById('p_kepemilikan').innerText = fd.get('kepemilikan') || "-";
+            document.getElementById('p_dapodik').innerText = fd.get('sinkron_dapodik') || "-";
+            document.getElementById('p_izin').innerText = fd.get('izin_operasional') || "-";
+
+            document.getElementById('p_kepsek').innerText = fd.get('nama_kepsek') || "-";
+            document.getElementById('p_hp').innerText = fd.get('hp_kepsek') || "-";
+            document.getElementById('p_auditor').innerText = fd.get('nama_auditor') || "-";
+            
+            document.getElementById('p_ruang').innerText = fd.get('kesiapan_ruang') || "-";
+            document.getElementById('p_listrik').innerText = fd.get('kesiapan_listrik_inet') || "-";
+            
+            document.getElementById('p_ifp_layar').innerText = fd.get('ifp_layar') || "-";
+            document.getElementById('p_ifp_os').innerText = fd.get('ifp_os') || "-";
+            document.getElementById('p_ifp_memori').innerText = fd.get('ifp_memori') || "-";
+            document.getElementById('p_ifp_touch').innerText = fd.get('ifp_touch') || "-";
+            document.getElementById('p_ifp_jaringan').innerText = fd.get('ifp_jaringan') || "-";
+            document.getElementById('p_ifp_aset').innerText = fd.get('ifp_aset') || "-";
+            document.getElementById('p_ifp_catatan').innerText = fd.get('ifp_catatan') || "-";
+            
+            const aksesorisIFPArray = [];
+            document.querySelectorAll('.aksesoris-cb:checked').forEach(cb => aksesorisIFPArray.push(cb.value));
+            document.getElementById('p_ifp_aksesoris').innerText = aksesorisIFPArray.length > 0 ? aksesorisIFPArray.join(", ") : "Tidak Ada";
+
+            // LOGIKA PRINT LAPTOP
+            if (document.getElementById('status_terima_laptop').value === 'Belum Diterima') {
+                document.getElementById('p_ops_jenis').innerText = "BELUM DITERIMA LAPTOP";
+                document.getElementById('p_ops_detail').innerHTML = "<b>STATUS: BELUM MENERIMA BANTUAN LAPTOP</b>";
+                document.getElementById('p_ops_aksesoris').innerText = "-";
+                document.getElementById('p_ops_aset').innerText = "-";
+                document.getElementById('p_ops_catatan').innerText = "-";
+            } else {
+                document.getElementById('p_ops_jenis').innerText = fd.get('ops_jenis') || "-";
+                document.getElementById('p_ops_detail').innerText = `${fd.get('ops_prosesor') || "-"}, ${fd.get('ops_ram') || "-"}, ${fd.get('ops_ssd') || "-"}, OS: ${fd.get('ops_os') || "-"}`;
+                const aksesorisLaptopArray = [];
+                document.querySelectorAll('.laptop-cb:checked').forEach(cb => aksesorisLaptopArray.push(cb.value));
+                document.getElementById('p_ops_aksesoris').innerText = aksesorisLaptopArray.length > 0 ? aksesorisLaptopArray.join(", ") : "Tidak Ada";
+                document.getElementById('p_ops_aset').innerText = fd.get('ops_aset') || "-";
+                document.getElementById('p_ops_catatan').innerText = fd.get('ops_catatan') || "-";
+            }
+
+            // LOGIKA PRINT HARDISK
+            if (document.getElementById('status_terima_hdd').value === 'Belum Diterima') {
+                document.getElementById('p_hdd_merk').innerHTML = "<b>STATUS: BELUM MENERIMA BANTUAN HARDISK</b>";
+                document.getElementById('p_hdd_fisik_sn_garansi').innerText = "-";
+                document.getElementById('p_hdd_kapasitas_konten').innerText = "-";
+                document.getElementById('p_hdd_smart').innerText = "-";
+                document.getElementById('p_hdd_catatan').innerText = "-";
+            } else {
+                document.getElementById('p_hdd_merk').innerText = fd.get('hdd_merk_cdi') || "-";
+                document.getElementById('p_hdd_fisik_sn_garansi').innerText = `Fisik: ${fd.get('hdd_fisik_port') || "-"} | S/N: ${fd.get('hdd_sn') || "-"} | Garansi: ${fd.get('hdd_kartu_garansi') || "-"}`;
+                document.getElementById('p_hdd_kapasitas_konten').innerText = `${fd.get('hdd_kapasitas_real') || "-"} | Konten Offline: ${fd.get('hdd_konten_rumah_pendidikan') || "-"} (${fd.get('hdd_kapasitas_konten') || "0"} GB)`;
+                document.getElementById('p_hdd_smart').innerText = `Nyala: ${fd.get('hdd_hours') || "0"} Jam | ${fd.get('hdd_count') || "0"} Kali | Status: ${fd.get('hdd_health') || "-"}`;
+                document.getElementById('p_hdd_catatan').innerText = fd.get('hdd_catatan') || "-";
+            }
+
+            document.getElementById('p_status_akhir').innerText = fd.get('kesimpulan_akhir') || "-";
+            document.getElementById('p_kesimpulan_akhir').innerText = fd.get('catatan_final') || "-";
+            document.getElementById('p_link').innerText = fd.get('link_drive_bukti') || "-";
+
+            document.getElementById('s_kepsek').innerText = fd.get('nama_kepsek') || "(.................................)";
+            document.getElementById('s_auditor').innerText = fd.get('nama_auditor') || "(.................................)";
+            
+            window.print();
+        }
+
+        // --- AUTO-SAVE ---
+        const form = document.getElementById('form-pemantauan');
+        const DRAFT_KEY = 'draft_pemantauan_satpen_2026';
+        const saveStatus = document.getElementById('save-status');
+
+        form.addEventListener('input', () => {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Simpan status khusus bypass
+            data['status_terima_laptop'] = document.getElementById('status_terima_laptop').value;
+            data['status_terima_hdd'] = document.getElementById('status_terima_hdd').value;
+
+            const aksesoris = [];
+            document.querySelectorAll('.aksesoris-cb:checked').forEach(cb => aksesoris.push(cb.value));
+            data['ifp_aksesoris_array'] = aksesoris;
+
+            const aksesorisLaptop = [];
+            document.querySelectorAll('.laptop-cb:checked').forEach(cb => aksesorisLaptop.push(cb.value));
+            data['laptop_aksesoris_array'] = aksesorisLaptop;
+            
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+            saveStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Draft...';
+            setTimeout(() => { saveStatus.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1"></i> Draft Aman'; }, 500);
+            updateTabStatus();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem(DRAFT_KEY);
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(key => {
+                    const field = form.elements[key];
+                    if (field && key !== 'ifp_aksesoris_array' && key !== 'laptop_aksesoris_array') {
+                        if (field.type === 'radio' || field.type === 'checkbox') {
+                            const radios = form.querySelectorAll(`input[name="${key}"]`);
+                            radios.forEach(r => { if(r.value === data[key]) r.checked = true; });
+                        } else { field.value = data[key]; }
+                    }
+                });
+                if(data['ifp_aksesoris_array']) {
+                    document.querySelectorAll('.aksesoris-cb').forEach(cb => {
+                        if(data['ifp_aksesoris_array'].includes(cb.value)) cb.checked = true;
+                    });
+                }
+                if(data['laptop_aksesoris_array']) {
+                    document.querySelectorAll('.laptop-cb').forEach(cb => {
+                        if(data['laptop_aksesoris_array'].includes(cb.value)) cb.checked = true;
+                    });
+                }
+                
+                // Panggil toggle fungsi setelah load draft
+                if(data['status_terima_laptop']) toggleLaptop();
+                if(data['status_terima_hdd']) toggleHdd();
+                
+                updateTabStatus();
+            }
+        });
+
+        // --- KIRIM DATA KE GOOGLE APPS SCRIPT ---
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzDNqX_GtJP5jOjNSSgqBTaNByuq86VKBjOUSx_07vFlUgUDpYkRRCFIt3Vy54SbrDk/exec'; 
+        
+        const btnSubmit = document.getElementById('btn-submit');
+        const submitText = document.getElementById('submit-text');
+        const submitLoader = document.getElementById('submit-loader');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault(); 
+            
+            // Set value IFP
+            const aksesorisArray = [];
+            document.querySelectorAll('.aksesoris-cb:checked').forEach(cb => aksesorisArray.push(cb.value));
+            document.getElementById('ifp_aksesoris_hidden').value = aksesorisArray.join(', ');
+
+            // Set value Laptop (Hanya jika diterima)
+            if(document.getElementById('status_terima_laptop').value === 'Sudah Diterima'){
+                const aksesorisLaptopArray = [];
+                document.querySelectorAll('.laptop-cb:checked').forEach(cb => aksesorisLaptopArray.push(cb.value));
+                document.getElementById('ops_aksesoris_hidden').value = aksesorisLaptopArray.join(', ');
+            }
+
+            if (!form.checkValidity()) {
+                const invalidElements = form.querySelectorAll(':invalid');
+                if (invalidElements.length > 0) {
+                    const firstInvalid = invalidElements[0];
+                    firstInvalid.reportValidity();
+                    const parentTab = firstInvalid.closest('.tab-content');
+                    if (parentTab) { openTab(parentTab.id); }
+                }
+                return;
+            }
+
+            submitText.classList.add('hidden');
+            submitLoader.classList.remove('hidden');
+            btnSubmit.disabled = true;
+
+            const formDataToSend = new FormData(form);
+
+            // LOGIKA INJEKSI DATABASE JIKA "BELUM DITERIMA"
+            // Timpa value form sebelum dikirim agar rapi di Google Sheets
+            if (document.getElementById('status_terima_laptop').value === 'Belum Diterima') {
+                formDataToSend.set('ops_jenis', 'BELUM DITERIMA LAPTOP');
+                formDataToSend.set('ops_prosesor', '-');
+                formDataToSend.set('ops_ram', '-');
+                formDataToSend.set('ops_ssd', '-');
+                formDataToSend.set('ops_os', '-');
+                formDataToSend.set('ops_aksesoris', '-');
+                formDataToSend.set('ops_aset', '-');
+            }
+            if (document.getElementById('status_terima_hdd').value === 'Belum Diterima') {
+                formDataToSend.set('hdd_merk_cdi', 'BELUM DITERIMA HARDISK');
+                formDataToSend.set('hdd_fisik_port', '-');
+                formDataToSend.set('hdd_sn', '-');
+                formDataToSend.set('hdd_garansi', '-');
+                formDataToSend.set('hdd_kapasitas_real', '-');
+                formDataToSend.set('hdd_konten_rumah_pendidikan', '-');
+                formDataToSend.set('hdd_kapasitas_konten', '0');
+                formDataToSend.set('hdd_kartu_garansi', '-');
+                formDataToSend.set('hdd_hours', '0');
+                formDataToSend.set('hdd_count', '0');
+                formDataToSend.set('hdd_health', '-');
+            }
+
+            fetch(scriptURL, { method: 'POST', body: formDataToSend })
+                .then(response => {
+                    submitText.classList.remove('hidden');
+                    submitLoader.classList.add('hidden');
+                    btnSubmit.disabled = false;
+                    document.getElementById('alert-success').classList.remove('hidden');
+                    document.querySelector('main').scrollTo({ top: document.querySelector('main').scrollHeight, behavior: 'smooth' }); 
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    submitText.classList.remove('hidden');
+                    submitLoader.classList.add('hidden');
+                    btnSubmit.disabled = false;
+                    document.getElementById('alert-error').classList.remove('hidden');
+                });
+        });
+    </script>
+</body>
+</html>
