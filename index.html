@@ -52,7 +52,14 @@
         @media print {
             body { background: white !important; color: black !important; font-size: 11pt; }
             .no-print, header, aside, button, nav, #alert-success, #alert-error, .bg-blue-50, .bg-red-50, .bg-yellow-50 { display: none !important; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0 20px; background: white; }
+            
+            /* Kontrol Mode Cetak (LHP vs Offline) */
+            body.print-mode-lhp #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0 20px; background: white; }
+            body.print-mode-lhp #print-offline-area { display: none !important; }
+            
+            body.print-mode-offline #print-offline-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 0 20px; background: white; }
+            body.print-mode-offline #print-area { display: none !important; }
+            
             .print-kop { text-align: center; border-bottom: 4px solid #067ac1; padding-bottom: 10px; margin-bottom: 20px; }
             .print-kop img { width: 100%; max-height: 140px; object-fit: contain; }
             .print-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 5px; color: black !important; }
@@ -64,6 +71,13 @@
             .signature-area { margin-top: 30px; width: 100%; display: table; page-break-inside: avoid; }
             .signature-box { display: table-cell; width: 50%; text-align: center; }
             .signature-space { height: 80px; }
+            
+            /* Tambahan CSS Khusus Blanko Offline */
+            .check-box { display: inline-block; width: 14px; height: 14px; border: 1px solid black; margin-right: 5px; vertical-align: middle; position: relative; top: -1px; }
+            .offline-opt { margin-right: 15px; display: inline-block; margin-bottom: 4px; }
+            .offline-line { border-bottom: 1px dotted black; display: inline-block; width: 100%; margin-top: 15px; }
+            .w-line { border-bottom: 1px solid black; display: inline-block; width: 200px; }
+            
             * { -webkit-print-color-adjust: exact; color-adjust: exact; }
             .page-break { page-break-before: always; }
         }
@@ -622,17 +636,17 @@
                                 <div class="bg-blue-50 dark:bg-slate-800 p-5 rounded-lg border border-blue-200 dark:border-slate-700">
                                     <label class="block text-base font-bold text-itjenblue dark:text-itjenorange mb-2"><i class="fa-brands fa-google-drive mr-2"></i>Tautan Google Drive (Bukti Audit & Dokumentasi) <span class="text-red-500">*</span></label>
                                     <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Mohon unggah file berikut ke dalam 1 folder Google Drive Anda: <strong>1) Foto/Scan BAPP, 2) Screenshot Hasil Uji Crystal Disk Info (CDI) Harddisk, 3) Screenshot System Properties/DxDiag Laptop, dan 4) Dokumentasi Alat & Ruangan</strong>. Pastikan akses folder diatur ke <em>"Siapa saja yang memiliki link" (Anyone with link)</em>, lalu tempel tautan tersebut di bawah ini.</p>
-                                    <input type="url" name="link_drive_bukti" required placeholder="https://drive.google.com/drive/folders/..." class="block w-full text-sm rounded-md border-gray-300 shadow-sm p-3 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white transition-colors font-mono">
-                                </div>
-                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                                <button type="button" onclick="generatePrintOffline()" class="w-full bg-white border-2 border-gray-400 text-gray-700 dark:bg-slate-800 dark:text-gray-300 dark:border-gray-500 font-bold py-3.5 px-4 rounded-lg shadow-sm hover:bg-gray-50 dark:hover:bg-slate-700 transition flex items-center justify-center">
+                                    <i class="fa-solid fa-file-pdf mr-2"></i> Blanko Offline
+                                </button>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200 dark:border-slate-700">
                                 <button type="button" onclick="generatePrint()" class="w-full bg-white border-2 border-itjenblue text-itjenblue dark:bg-slate-800 dark:text-itjenorange dark:border-itjenorange font-bold py-3.5 px-4 rounded-lg shadow-sm hover:bg-blue-50 dark:hover:bg-slate-700 transition flex items-center justify-center">
-                                    <i class="fa-solid fa-print mr-2"></i> Cetak Laporan PDF (LHP)
+                                    <i class="fa-solid fa-print mr-2"></i> Cetak LHP (Terisi)
                                 </button>
                                 
                                 <button type="submit" id="btn-submit" class="w-full bg-itjenblue text-white font-bold py-3.5 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition flex items-center justify-center">
-                                    <span id="submit-text"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Data Ke Server</span>
+                                    <span id="submit-text"><i class="fa-solid fa-paper-plane mr-2"></i> Kirim Data</span>
                                     <div id="submit-loader" class="loader hidden"></div>
                                 </button>
                             </div>
@@ -715,6 +729,181 @@
                 <p>Petugas Auditor,</p>
                 <div class="signature-space"></div>
                 <p style="font-weight:bold; text-decoration:underline;" id="s_auditor"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AREA CETAK BLANKO OFFLINE (BARU) -->
+    <div id="print-offline-area" class="hidden">
+        <div class="print-kop">
+            <img src="Header Itjen Kemendikdasmen.png" alt="Kop Surat Resmi Kemendikdasmen">
+        </div>
+        
+        <h3 class="print-subtitle">BLANKO OFFLINE: INSTRUMEN UJI PETIK KESIAPAN BAPP<br>BANTUAN DIGITALISASI PENDIDIKAN TAHUN 2026</h3>
+        <p style="text-align:center; font-style:italic; font-size:10pt; margin-bottom:15px; margin-top:-15px;">(Gunakan blanko ini jika sekolah berada di area blank spot internet. Pindahkan data ke Web App saat mendapat sinyal).</p>
+
+        <div class="print-section-title">A. IDENTITAS SATUAN PENDIDIKAN</div>
+        <table class="print-table">
+            <tr><th width="30%">NPSN</th><td><span class="w-line" style="width:100%;"></span></td></tr>
+            <tr><th>Nama Satuan Pendidikan</th><td><span class="w-line" style="width:100%;"></span></td></tr>
+            <tr><th>Alamat Lengkap</th><td><span class="w-line" style="width:100%;"></span></td></tr>
+            <tr><th>Kecamatan / Kab. / Prov.</th><td><span class="w-line" style="width:25%;"></span> / <span class="w-line" style="width:25%;"></span> / <span class="w-line" style="width:25%;"></span></td></tr>
+            <tr><th>Jumlah Siswa</th><td><span class="w-line" style="width: 50px;"></span> Siswa</td></tr>
+            <tr><th>Status Kepemilikan</th><td>
+                <span class="offline-opt"><span class="check-box"></span> Pemda (Negeri)</span>
+                <span class="offline-opt"><span class="check-box"></span> Yayasan (Swasta)</span>
+                <span class="offline-opt"><span class="check-box"></span> Pribadi/Lainnya</span>
+            </td></tr>
+            <tr><th>Akreditasi</th><td>
+                <span class="offline-opt"><span class="check-box"></span> A</span>
+                <span class="offline-opt"><span class="check-box"></span> B</span>
+                <span class="offline-opt"><span class="check-box"></span> C</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum Terakreditasi</span>
+            </td></tr>
+            <tr><th>Nama & HP Kepsek</th><td><span class="w-line" style="width:40%;"></span> / <span class="w-line" style="width:40%;"></span></td></tr>
+            <tr><th>Nama Petugas Auditor</th><td><span class="w-line" style="width:100%;"></span></td></tr>
+            <tr><th>Sinkronisasi Dapodik</th><td>
+                <span class="offline-opt"><span class="check-box"></span> Sudah Sinkron</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum/Terlambat</span>
+            </td></tr>
+            <tr><th>Izin Operasional (Swasta)</th><td>
+                <span class="offline-opt"><span class="check-box"></span> Aktif/Negeri</span>
+                <span class="offline-opt"><span class="check-box"></span> Kadaluarsa/Proses</span>
+            </td></tr>
+        </table>
+
+        <div class="print-section-title">B. INTERACTIVE FLAT PANEL (IFP) - HISENSE 75WM61FE</div>
+        <table class="print-table">
+            <tr><td width="30%">Fisik Layar (75 Inch)</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Sesuai</span>
+                <span class="offline-opt"><span class="check-box"></span> Tidak Sesuai (Retak/Dead Pixel/Bukan 75")</span>
+            </td></tr>
+            <tr><td>Sistem Operasi (Wajib Android 13)</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Sesuai</span>
+                <span class="offline-opt"><span class="check-box"></span> Tidak Sesuai (Android Lama)</span>
+            </td></tr>
+            <tr><td>Memori (RAM 16GB, ROM 256GB)</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Sesuai</span>
+                <span class="offline-opt"><span class="check-box"></span> Downgrade Spek</span>
+            </td></tr>
+            <tr><td>Teknologi Sentuh, Jaringan & Audio</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Normal / Optimal</span>
+                <span class="offline-opt"><span class="check-box"></span> Bermasalah / Mati</span>
+            </td></tr>
+            <tr><td>Kelengkapan Aksesoris (Centang)</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Bracket</span>
+                <span class="offline-opt"><span class="check-box"></span> Kabel HDMI</span>
+                <span class="offline-opt"><span class="check-box"></span> Kabel USB</span><br>
+                <span class="offline-opt"><span class="check-box"></span> 2 Stylus</span>
+                <span class="offline-opt"><span class="check-box"></span> Panduan</span>
+                <span class="offline-opt"><span class="check-box"></span> Kartu Garansi</span>
+            </td></tr>
+            <tr><td>Status Inventarisasi Aset</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Sudah Terinventarisasi</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum</span>
+            </td></tr>
+            <tr><td>Catatan / Temuan IFP</td><td><span class="offline-line"></span><br><span class="offline-line"></span></td></tr>
+        </table>
+
+        <div class="print-section-title">C. MODUL LAPTOP</div>
+        <table class="print-table">
+            <tr><td colspan="2">
+                <b>Status Bantuan Laptop:</b> &nbsp;&nbsp;
+                <span class="offline-opt"><span class="check-box"></span> Sudah Diterima</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum Diterima (Coret bagian C ini)</span>
+            </td></tr>
+            <tr><td width="30%">Merk dan Tipe</td><td>
+                <span class="offline-opt"><span class="check-box"></span> DAC F1</span>
+                <span class="offline-opt"><span class="check-box"></span> DAC F2</span>
+                <span class="offline-opt"><span class="check-box"></span> Libera X10-K</span><br>
+                <span class="offline-opt"><span class="check-box"></span> MUGEN OPHIR</span>
+                <span class="offline-opt"><span class="check-box"></span> Zyrex Cruiser</span>
+                <span class="offline-opt"><span class="check-box"></span> Lainnya: _________</span>
+            </td></tr>
+            <tr><td>Prosesor & RAM</td><td>
+                <b>Prosesor:</b> <span class="offline-opt"><span class="check-box"></span> Sesuai</span> <span class="offline-opt"><span class="check-box"></span> Downgrade</span> | 
+                <b>RAM:</b> <span class="offline-opt"><span class="check-box"></span> Sesuai</span> <span class="offline-opt"><span class="check-box"></span> Kurang (<8GB)</span>
+            </td></tr>
+            <tr><td>Penyimpanan & OS</td><td>
+                <b>SSD:</b> <span class="offline-opt"><span class="check-box"></span> Sesuai</span> <span class="offline-opt"><span class="check-box"></span> Tidak Sesuai</span> | 
+                <b>OS:</b> <span class="offline-opt"><span class="check-box"></span> Asli</span> <span class="offline-opt"><span class="check-box"></span> Bajakan</span>
+            </td></tr>
+            <tr><td>Kelengkapan Aksesoris</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Adaptor/Kabel</span>
+                <span class="offline-opt"><span class="check-box"></span> Dus Box</span>
+                <span class="offline-opt"><span class="check-box"></span> Buku Manual</span>
+                <span class="offline-opt"><span class="check-box"></span> Kartu Garansi</span>
+            </td></tr>
+            <tr><td>Status Inventarisasi Aset</td><td>
+                <span class="offline-opt"><span class="check-box"></span> Sudah Terinventarisasi</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum</span>
+            </td></tr>
+            <tr><td>Catatan Laptop</td><td><span class="offline-line"></span></td></tr>
+        </table>
+
+        <div class="page-break"></div>
+
+        <div class="print-section-title">D. HARDISK EKSTERNAL</div>
+        <table class="print-table">
+            <tr><td colspan="2">
+                <b>Status Bantuan Hardisk:</b> &nbsp;&nbsp;
+                <span class="offline-opt"><span class="check-box"></span> Sudah Diterima</span>
+                <span class="offline-opt"><span class="check-box"></span> Belum Diterima (Coret bagian D ini)</span>
+            </td></tr>
+            <tr><td width="30%">Merk/Tipe (Cek CDI)</td><td><span class="w-line" style="width: 100%;"></span></td></tr>
+            <tr><td>Fisik Port & S/N</td><td>
+                <b>Fisik:</b> <span class="offline-opt"><span class="check-box"></span> Baru</span> <span class="offline-opt"><span class="check-box"></span> Aus/Bekas</span> | 
+                <b>S/N:</b> <span class="offline-opt"><span class="check-box"></span> Sama Persis</span> <span class="offline-opt"><span class="check-box"></span> Berbeda (Bajakan)</span>
+            </td></tr>
+            <tr><td>Kapasitas & Konten Edukasi</td><td>
+                <b>Kapasitas:</b> <span class="offline-opt"><span class="check-box"></span> Sesuai 500GB</span> <span class="offline-opt"><span class="check-box"></span> Tdk Terbaca</span> <span class="offline-opt"><span class="check-box"></span> Tdk Sesuai (____GB)</span><br>
+                <b>Rumah Pendidikan:</b> <span class="offline-opt"><span class="check-box"></span> Ada (____GB)</span> <span class="offline-opt"><span class="check-box"></span> Tidak Ada (Kosong)</span>
+            </td></tr>
+            <tr><td>Garansi Fisik & Web DTARA</td><td>
+                <b>Kartu Fisik:</b> <span class="offline-opt"><span class="check-box"></span> Ada</span> <span class="offline-opt"><span class="check-box"></span> Tidak</span> | 
+                <b>Web:</b> <span class="offline-opt"><span class="check-box"></span> Aktif/Resmi</span> <span class="offline-opt"><span class="check-box"></span> Expired/BM</span>
+            </td></tr>
+            <tr><td>Data S.M.A.R.T (Uji CDI)</td><td>
+                <b>Power on Hours:</b> _______ Jam | <b>Power on Count:</b> _______ Kali<br>
+                <b>Health Status:</b> 
+                <span class="offline-opt"><span class="check-box"></span> Good (Biru)</span>
+                <span class="offline-opt"><span class="check-box"></span> Caution (Kuning)</span>
+                <span class="offline-opt"><span class="check-box"></span> Bad (Merah)</span>
+                <span class="offline-opt"><span class="check-box"></span> Unknown</span>
+            </td></tr>
+            <tr><td>Catatan Hardisk</td><td><span class="offline-line"></span></td></tr>
+        </table>
+
+        <div class="print-section-title">E. KESIMPULAN AKHIR LHP</div>
+        <table class="print-table">
+            <tr><td colspan="2" style="padding: 15px;">
+                <div style="margin-bottom:10px; font-weight:bold;">Status Akhir Kelayakan Satuan Pendidikan (Pilih Salah Satu):</div>
+                <div style="margin-bottom:10px;">
+                    <span class="check-box" style="width:20px; height:20px;"></span> <b>MEMENUHI BAPP</b> (Seluruh perangkat 100% sesuai juknis, asli, tidak downgrade, lengkap).
+                </div>
+                <div>
+                    <span class="check-box" style="width:20px; height:20px;"></span> <b>ADA TEMUAN / TIDAK SESUAI</b> (Ditemukan indikasi downgrade spek, barang rekondisi/palsu, aksesoris hilang).
+                </div>
+            </td></tr>
+            <tr><td width="30%">Kesimpulan Global LHP</td><td><span class="offline-line"></span><br><span class="offline-line"></span><br><span class="offline-line"></span></td></tr>
+        </table>
+
+        <div style="margin-top:20px; font-style:italic; text-align:center;">
+            *Dokumentasi BAPP, Hasil Uji CDI, DxDiag Laptop, dan Foto Fisik wajib diunggah ke Google Drive.
+        </div>
+
+        <div class="signature-area">
+            <div class="signature-box">
+                <p>Kepala Satuan Pendidikan,</p>
+                <div class="signature-space"></div>
+                <p style="font-weight:bold;">( ___________________________ )</p>
+                <p>NIP.</p>
+            </div>
+            <div class="signature-box">
+                <p>Petugas Auditor,</p>
+                <div class="signature-space"></div>
+                <p style="font-weight:bold;">( ___________________________ )</p>
+                <p>NIP.</p>
             </div>
         </div>
     </div>
@@ -892,6 +1081,9 @@
 
         // --- CETAK LAPORAN (PRINT LHP) ---
         function generatePrint() {
+            document.body.classList.add('print-mode-lhp');
+            document.body.classList.remove('print-mode-offline');
+            
             const fd = new FormData(document.getElementById('form-pemantauan'));
             document.getElementById('p_npsn').innerText = fd.get('kode_pemantauan') || "-";
             document.getElementById('p_sekolah').innerText = fd.get('nama_sekolah') || "-";
@@ -966,6 +1158,13 @@
             document.getElementById('s_kepsek').innerText = fd.get('nama_kepsek') || "(.................................)";
             document.getElementById('s_auditor').innerText = fd.get('nama_auditor') || "(.................................)";
             
+            window.print();
+        }
+
+        // --- CETAK BLANKO OFFLINE ---
+        function generatePrintOffline() {
+            document.body.classList.add('print-mode-offline');
+            document.body.classList.remove('print-mode-lhp');
             window.print();
         }
 
