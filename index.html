@@ -504,13 +504,14 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">4. Kapasitas & Uji Kapasitas Palsu <span class="text-red-500">*</span></label>
-                                        <select name="hdd_kapasitas_real" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">4. Kapasitas Penyimpanan <span class="text-red-500">*</span></label>
+                                        <select name="hdd_kapasitas_real" id="hdd_kapasitas_real" data-req="true" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white" onchange="toggleKapasitasLain()">
                                             <option value="">-- Cek Kapasitas Riil --</option>
-                                            <option value="Sesuai (500GB)">Sesuai (Label 500GB, terbaca riil ~465GB)</option>
-                                            <option value="Tidak Sesuai (Kapasitas dibawah 500 GB)">Tidak Sesuai (Kapasitas dibawah 500 GB)</option>
-                                            <option value="Kapasitas Palsu (Uji Crystal Disk Info Error)">Kapasitas Palsu (Error saat uji Crystal Disk Info)</option>
+                                            <option value="Sesuai (Label 500GB)">Sesuai (Label 500GB)</option>
+                                            <option value="Kapasitas Tidak Terbaca Aplikasi CDI">Kapasitas Tidak Terbaca Aplikasi CDI</option>
+                                            <option value="Tidak Sesuai (Bukan 500GB)">Tidak Sesuai (Bukan 500GB), Tuliskan kapasitasnya ...</option>
                                         </select>
+                                        <input type="text" name="hdd_kapasitas_lain" id="hdd_kapasitas_lain" placeholder="Sebutkan kapasitas yang terbaca (Misal: 320GB / 1TB)..." class="mt-2 hidden block w-full rounded-md border-gray-300 shadow-sm border p-2.5 focus:ring-itjenblue dark:bg-slate-700 dark:border-slate-600 dark:text-white transition-colors">
                                     </div>
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -565,8 +566,10 @@
                                                 <label class="block text-xs font-bold mb-1">Health Status <span class="text-red-500">*</span></label>
                                                 <select name="hdd_health" data-req="true" required class="block w-full rounded border-gray-300 shadow-sm p-2 focus:ring-itjenblue dark:bg-slate-700 dark:text-white">
                                                     <option value="">-- Pilih --</option>
-                                                    <option value="Good (Biru)">Good / Biru</option>
-                                                    <option value="Caution/Bad (Merah)">Caution/Bad</option>
+                                                    <option value="Good (Biru)">Good (Biru)</option>
+                                                    <option value="Caution (Kuning)">Caution (Kuning)</option>
+                                                    <option value="Bad (Merah)">Bad (Merah)</option>
+                                                    <option value="Unknown">Unknown (Tidak Terbaca)</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -772,6 +775,21 @@
             updateTabStatus();
         }
 
+        // --- FUNGSI TOGGLE INPUT KAPASITAS LAIN ---
+        function toggleKapasitasLain() {
+            const val = document.getElementById('hdd_kapasitas_real').value;
+            const inputLain = document.getElementById('hdd_kapasitas_lain');
+            if (val === 'Tidak Sesuai (Bukan 500GB)') {
+                inputLain.classList.remove('hidden');
+                inputLain.setAttribute('required', 'true');
+            } else {
+                inputLain.classList.add('hidden');
+                inputLain.removeAttribute('required');
+                inputLain.value = ''; 
+            }
+            updateTabStatus();
+        }
+
         function updateTabStatus() {
             const tabs = ['tab-kesiapan', 'tab-ifp', 'tab-laptop', 'tab-hdd', 'tab-submit'];
             tabs.forEach(tabId => {
@@ -930,7 +948,13 @@
             } else {
                 document.getElementById('p_hdd_merk').innerText = fd.get('hdd_merk_cdi') || "-";
                 document.getElementById('p_hdd_fisik_sn_garansi').innerText = `Fisik: ${fd.get('hdd_fisik_port') || "-"} | S/N: ${fd.get('hdd_sn') || "-"} | Garansi: ${fd.get('hdd_kartu_garansi') || "-"}`;
-                document.getElementById('p_hdd_kapasitas_konten').innerText = `${fd.get('hdd_kapasitas_real') || "-"} | Konten Offline: ${fd.get('hdd_konten_rumah_pendidikan') || "-"} (${fd.get('hdd_kapasitas_konten') || "0"} GB)`;
+                
+                let hddKapasitas = fd.get('hdd_kapasitas_real') || "-";
+                if (hddKapasitas === 'Tidak Sesuai (Bukan 500GB)') {
+                    hddKapasitas = `Tidak Sesuai (${fd.get('hdd_kapasitas_lain') || "-"})`;
+                }
+                document.getElementById('p_hdd_kapasitas_konten').innerText = `${hddKapasitas} | Konten Offline: ${fd.get('hdd_konten_rumah_pendidikan') || "-"} (${fd.get('hdd_kapasitas_konten') || "0"} GB)`;
+                
                 document.getElementById('p_hdd_smart').innerText = `Power on Hours: ${fd.get('hdd_hours') || "0"} Jam | Power on Count: ${fd.get('hdd_count') || "0"} Kali | Status: ${fd.get('hdd_health') || "-"}`;
                 document.getElementById('p_hdd_catatan').innerText = fd.get('hdd_catatan') || "-";
             }
@@ -999,6 +1023,7 @@
                 // Panggil toggle fungsi setelah load draft
                 if(data['status_terima_laptop']) toggleLaptop();
                 if(data['status_terima_hdd']) toggleHdd();
+                if(data['hdd_kapasitas_real']) toggleKapasitasLain();
                 
                 updateTabStatus();
             }
@@ -1042,6 +1067,12 @@
             btnSubmit.disabled = true;
 
             const formDataToSend = new FormData(form);
+
+            // Gabungkan input kapasitas lain ke opsi dropdown jika dipilih "Tidak Sesuai"
+            if (formDataToSend.get('hdd_kapasitas_real') === 'Tidak Sesuai (Bukan 500GB)') {
+                formDataToSend.set('hdd_kapasitas_real', 'Tidak Sesuai (' + formDataToSend.get('hdd_kapasitas_lain') + ')');
+            }
+            formDataToSend.delete('hdd_kapasitas_lain'); // Bersihkan dari form agar tidak menjadi sampah
 
             // LOGIKA INJEKSI DATABASE JIKA "BELUM DITERIMA"
             // Timpa value form sebelum dikirim agar rapi di Google Sheets
